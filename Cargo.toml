@@ -1,0 +1,9 @@
+[package]
+name = "flightsim"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+lodepng = "3.11.0"
+minifb = "0.28.0"
+png = "0.17.16"
