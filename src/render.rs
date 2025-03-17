@@ -1,11 +1,14 @@
 use crate::{
     camera::Camera,
     config::Config,
-    game::Point,
     load_maps::TerrainPyramids
 };
 use minifb::Window;
 
+pub struct Point {
+    pub x: f64,
+    pub y: f64
+}
 
 static SKY_BLUE: u32 = 0x000080E0;
 

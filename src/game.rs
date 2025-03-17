@@ -17,12 +17,6 @@ pub struct Game {
     pub config: Config,
 }
 
-// this feels like a weird and very wrong file to put this definition in
-pub struct Point {
-    pub x: f64,
-    pub y: f64
-}
-
 impl Game {
     pub fn new() -> Self {
         let config = Config::default();
