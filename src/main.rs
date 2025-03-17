@@ -1,4 +1,4 @@
-use flightsim::game::Game;
+use voxelspace_rs::game::Game;
 use std::env;
 
 fn main() {
