@@ -1,6 +1,5 @@
 pub mod load_maps;
 pub mod render;
-pub mod dirtily;
 pub mod config;
 pub mod camera;
 pub mod game;
