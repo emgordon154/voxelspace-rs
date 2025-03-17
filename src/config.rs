@@ -1,7 +1,10 @@
 pub struct Config {
-    pub screen_height: usize,
     pub screen_width: usize,
-    pub draw_distance: u64
+    pub screen_height: usize,
+    pub max_fps: usize,
+    pub draw_distance: u64, // Should this necessarily be a piece of the game's global state?
+    pub scale_height: f64, // This *definitely* feels out-of-place here.
+    pub horizon: f64, // So does this.
 }
 
 // impl Config {
@@ -13,10 +16,15 @@ pub struct Config {
 use std::default::Default;
 impl Default for Config {
     fn default() -> Self {
+        let screen_width = 1080;
+        let screen_height = 720;
         Self {
-            screen_height: 540,
-            screen_width: 360,
-            draw_distance: 400
+            screen_width,
+            screen_height,
+            max_fps: 60,
+            draw_distance: 400,
+            scale_height: 240.0,
+            horizon: screen_height as f64 / 3.0,
         }
     }
 }

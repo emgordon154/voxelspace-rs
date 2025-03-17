@@ -1,9 +1,14 @@
+// This file is filthy!!!
+// It's my successful first attempt at making this whole thing work,
+// by doing it as hastily and slapdash as possible.
+#![deprecated]
+
 use minifb::{Key, Window, WindowOptions};
 use std::fs::File;
 
 
 fn load_heightmap() -> Vec<u8> {
-    let decoder = png::Decoder::new(File::open("maps/D5.png").unwrap()); 
+    let decoder = png::Decoder::new(File::open("maps/height/D5.png").unwrap()); 
     let mut reader = decoder.read_info().unwrap();
     let mut buf = vec![0; reader.output_buffer_size()];
     reader.next_frame(&mut buf).unwrap();
@@ -22,7 +27,7 @@ fn load_heightmap() -> Vec<u8> {
 // }
 
 fn load_colormap() -> Vec<u32> {
-    let buf = lodepng::decode24_file("maps/C5W.png").expect("failed to load heightmap").buffer;
+    let buf = lodepng::decode24_file("maps/color/C5W.png").expect("failed to load heightmap").buffer;
     return buf.iter().map(|rgb|((rgb.r as u32) << 16) | ((rgb.g as u32) << 8) | rgb.b as u32).collect()
 }
 
