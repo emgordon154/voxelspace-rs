@@ -47,9 +47,9 @@ impl Camera {
             self.rot_accel = self.rot_accel.max(-1.0);
         }
         self.phi += self.max_rot_velocity / (1.0 + (-0.5 * (self.rot_accel - 0.0)).exp()) - self.max_rot_velocity / 2.0;
-
-        self.y -= self.phi.sin() * self.velocity;
-        self.x -= self.phi.cos() * self.velocity;
+        // Note the unintuitive relation between coordinates and trig functions here. Switch them for disorientation!
+        self.y -= self.phi.cos() * self.velocity;
+        self.x -= self.phi.sin() * self.velocity;
 
         // Change height (TODO: vertical acceleration)
         if window.is_key_down(Key::R){
