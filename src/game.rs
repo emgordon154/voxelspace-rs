@@ -44,7 +44,8 @@ impl Game {
         while window.is_open() && !window.is_key_down(Key::Escape) {
             frame_counter += 1;
             let before_render_timestamp = Instant::now();
-            render::render(&mut camera, &mut window, &config, &mut frame_buf, &mut y_buf, &current_map_pyrs);
+            camera.react_to_inputs(&window);
+            render::render(&mut camera, &config, &mut frame_buf, &mut y_buf, &current_map_pyrs);
             window::display_fps(&mut window, &config, &before_render_timestamp, &mut total_rendering_time, &mut frame_counter);
             // What can/should I do as far as error handling here? I don't see a compelling reason not to just panic.
             window

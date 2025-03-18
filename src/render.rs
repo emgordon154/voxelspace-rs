@@ -1,9 +1,10 @@
+use core::f64;
+
 use crate::{
     camera::Camera,
     config::Config,
     load_maps::TerrainPyramids
 };
-use minifb::Window;
 
 pub struct Point {
     pub x: f64,
@@ -14,7 +15,6 @@ static SKY_BLUE: u32 = 0x000080E0;
 
 pub fn render(
     cam: &mut Camera, 
-    window: &mut Window,
     config: &Config,
     frame_buf: &mut [u32],
     y_buf: &mut [usize],
@@ -40,10 +40,15 @@ pub fn render(
         //     hmap[((p.x / 2.0).rem_euclid(hmap.width() as f64) as u32, (p.y / 2.0).rem_euclid(hmap.height() as f64) as u32 )].0[0] as usize
     };
     
-    let sinphi = cam.phi.sin();
-    let cosphi = cam.phi.cos();
-    cam.react_to_inputs(&window);
+    let fov_adjust = (config.fov - 90.0) * f64::consts::PI / 90.0;
+    let phi_left = cam.phi - fov_adjust;
+    let sinphi_left = phi_left.sin();
+    let cosphi_left = phi_left.cos();
+    let phi_right = cam.phi - fov_adjust;
+    let sinphi_right = phi_right.sin();
+    let cosphi_right = phi_right.cos();
 
+    
     frame_buf.fill(SKY_BLUE);
     y_buf.fill(config.screen_height - 1);
 
@@ -52,12 +57,12 @@ pub fn render(
     let mut dz = 1.0;
     while z < config.draw_distance as f64 {
         let mut pleft = Point{
-            x: -cosphi * z - sinphi * z + cam.x,
-            y: sinphi * z - cosphi * z + cam.y
+            x: -cosphi_left * z - sinphi_left * z + cam.x,
+            y: sinphi_left * z - cosphi_left * z + cam.y
         };
         let pright = Point{
-            x: cosphi * z - sinphi * z + cam.x,
-            y: -sinphi * z - cosphi * z + cam.y
+            x: cosphi_right * z - sinphi_right * z + cam.x,
+            y: -sinphi_right * z - cosphi_right * z + cam.y
         };
         
         let dx = (pright.x - pleft.x) / config.screen_height as f64;

@@ -36,8 +36,6 @@ impl Camera {
             self.accel_factor = self.accel_factor.max(0.0);
         }
         self.velocity = self.max_velocity / (1.0 + (-0.5 * (self.accel_factor - 4.0)).exp());
-        self.y -= self.phi.cos() * self.velocity;
-        self.x -= self.phi.sin() * self.velocity;
 
         // Yaw
         if window.is_key_down(Key::A){
@@ -49,6 +47,9 @@ impl Camera {
             self.rot_accel = self.rot_accel.max(-1.0);
         }
         self.phi += self.max_rot_velocity / (1.0 + (-0.5 * (self.rot_accel - 0.0)).exp()) - self.max_rot_velocity / 2.0;
+
+        self.y -= self.phi.sin() * self.velocity;
+        self.x -= self.phi.cos() * self.velocity;
 
         // Change height (TODO: vertical acceleration)
         if window.is_key_down(Key::R){
