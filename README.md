@@ -14,8 +14,6 @@ Be aware that the performance is currently unacceptably bad when compiled in deb
 
 * Make use of the mipmaps. I've experimented with taking sparser samples of the terrain farther out from the camera, and *wow*, does it get ugly without mapmapping!
 
-* Configurable FOV. Currently, it's locked at 90.
-
 * Desynchronize the logic from the frame rate? I'm undecided on that. There's some joy to be found in old video games when the whole thing would slow down as the boss spammed fancy projectiles or fancily exploded. On the other hand, different CPUs have different thresholds of running full-speed vs slowing down cinematically vs turning into a slideshow.
 
 * Start turning this engine into a game? Would be fun to make the terrain destructible, give the player a ship with stuff to make craters in it.
