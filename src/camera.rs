@@ -2,7 +2,7 @@ pub struct Camera {
     pub x: f64,
     pub y: f64,
     pub height: f64,
-    pub phi: f64,
+    pub theta: f64,
     pub rot_accel: f64,
     pub max_rot_velocity: f64,
     pub velocity: f64,
@@ -17,7 +17,7 @@ impl Camera {
             x: 0.0,
             y: 0.0,
             height: 300.0, // What's a good starting height, and where in this codebase should it go?
-            phi: -2.5,
+            theta: -2.5,
             rot_accel: 0.0,
             max_rot_velocity: 0.075,
             velocity: 2.0, 
@@ -46,10 +46,10 @@ impl Camera {
             self.rot_accel -= 0.025;
             self.rot_accel = self.rot_accel.max(-1.0);
         }
-        self.phi += self.max_rot_velocity / (1.0 + (-0.5 * (self.rot_accel - 0.0)).exp()) - self.max_rot_velocity / 2.0;
+        self.theta += self.max_rot_velocity / (1.0 + (-0.5 * (self.rot_accel - 0.0)).exp()) - self.max_rot_velocity / 2.0;
         // Note the unintuitive relation between coordinates and trig functions here. Switch them for disorientation!
-        self.y -= self.phi.cos() * self.velocity;
-        self.x -= self.phi.sin() * self.velocity;
+        self.y -= self.theta.cos() * self.velocity;
+        self.x -= self.theta.sin() * self.velocity;
 
         // Change height (TODO: vertical acceleration)
         if window.is_key_down(Key::R){
