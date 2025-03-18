@@ -14,10 +14,10 @@ use minifb::{Window, Key};
 impl Camera {
     pub fn new() -> Self {
         Self {
-            x: 0.0,
-            y: 0.0,
-            height: 300.0, // What's a good starting height, and where in this codebase should it go?
-            theta: -2.5,
+            x: 20.0,
+            y: 20.0,
+            height: 200.0, // What's a good starting height, and where in this codebase should it go?
+            theta: -2.25,
             rot_accel: 0.0,
             max_rot_velocity: 0.075,
             velocity: 2.0, 
