@@ -41,10 +41,10 @@ pub fn render(
     };
     
     let fov_adjust = (config.fov - 90.0) * f64::consts::PI / 90.0;
-    let phi_left = cam.phi - fov_adjust;
+    let phi_left = cam.phi - fov_adjust / 2.0;
     let sinphi_left = phi_left.sin();
     let cosphi_left = phi_left.cos();
-    let phi_right = cam.phi - fov_adjust;
+    let phi_right = cam.phi + fov_adjust / 2.0;
     let sinphi_right = phi_right.sin();
     let cosphi_right = phi_right.cos();
 
