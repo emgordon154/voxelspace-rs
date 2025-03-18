@@ -3,7 +3,7 @@ use crate::{
     config::Config,
     load_maps::{self, TerrainPyramids},
     render,
-    window::{self, display_fps}
+    window
 };
 use minifb::{Window, Key};
 use std::time::Instant;
@@ -45,7 +45,7 @@ impl Game {
             frame_counter += 1;
             let before_render_timestamp = Instant::now();
             render::render(&mut camera, &mut window, &config, &mut frame_buf, &mut y_buf, &current_map_pyrs);
-            display_fps(&mut window, &config, &before_render_timestamp, &mut total_rendering_time, &mut frame_counter);
+            window::display_fps(&mut window, &config, &before_render_timestamp, &mut total_rendering_time, &mut frame_counter);
             // What can/should I do as far as error handling here? I don't see a compelling reason not to just panic.
             window
                 .update_with_buffer(&frame_buf, config.screen_width, config.screen_height)
