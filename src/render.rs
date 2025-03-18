@@ -40,7 +40,9 @@ pub fn render(
         //     hmap[((p.x / 2.0).rem_euclid(hmap.width() as f64) as u32, (p.y / 2.0).rem_euclid(hmap.height() as f64) as u32 )].0[0] as usize
     };
     
-    let fov_adjust = (config.fov - 90.0) * f64::consts::PI / 90.0;
+    let fov = config.base_fov - config.speed_fov_adjust * (cam.velocity / cam.max_velocity);
+
+    let fov_adjust = (fov - 90.0) * f64::consts::PI / 90.0;
     let phi_left = cam.phi + fov_adjust / 2.0;
     let sinphi_left = phi_left.sin();
     let cosphi_left = phi_left.cos();

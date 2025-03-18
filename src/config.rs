@@ -2,7 +2,8 @@ pub struct Config {
     pub screen_width: usize,
     pub screen_height: usize,
     pub max_fps: usize,
-    pub fov: f64, // Should this be here or on the camera?
+    pub base_fov: f64, // Should this be here or on the camera?
+    pub speed_fov_adjust: f64,
     pub draw_distance: u64, // Should this necessarily be a piece of the game's global state?
     pub scale_height: f64, // This feel maybe out-of-place here.
     pub horizon: f64, // So does this.
@@ -23,7 +24,8 @@ impl Default for Config {
             screen_width,
             screen_height,
             max_fps: 60,
-            fov: 80.0,
+            base_fov: 95.0,
+            speed_fov_adjust: 15.0,
             draw_distance: 400,
             scale_height: 240.0,
             horizon: screen_height as f64 / 3.0,
