@@ -23,7 +23,7 @@ impl Default for Config {
             screen_width,
             screen_height,
             max_fps: 60,
-            fov: 100.0,
+            fov: 80.0,
             draw_distance: 400,
             scale_height: 240.0,
             horizon: screen_height as f64 / 3.0,
