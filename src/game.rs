@@ -17,8 +17,9 @@ pub struct Game {
     pub config: Config,
 }
 
-impl Game {
-    pub fn new() -> Self {
+use std::default::Default;
+impl Default for Game {
+    fn default() -> Self {
         let config = Config::default();
         Self {
             camera: Camera::new(),
@@ -29,6 +30,10 @@ impl Game {
             config,
         }
     }
+}
+
+impl Game {
+    pub fn new() -> Self { Game::default() }
 
     pub fn run(self) {
         let Self {
@@ -46,8 +51,7 @@ impl Game {
             let before_render_timestamp = Instant::now();
             camera.react_to_inputs(&window);
             render::render(&mut camera, &config, &mut frame_buf, &mut y_buf, &current_map_pyrs);
-            window::display_fps(&mut window, &config, &before_render_timestamp, &mut total_rendering_time, &mut frame_counter);
-            // What can/should I do as far as error handling here? I don't see a compelling reason not to just panic.
+            window::display_fps(&mut window, &config, &before_render_timestamp, &mut total_rendering_time, &frame_counter);
             window
                 .update_with_buffer(&frame_buf, config.screen_width, config.screen_height)
                 .unwrap();
