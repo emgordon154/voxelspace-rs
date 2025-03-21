@@ -31,7 +31,7 @@ pub struct TerrainPyramids {
 
 use std::error::Error;
 
-pub fn load_maps<'a>(heightmap_name: &str, colormap_name: &str) -> Result<TerrainPyramids, Box<dyn Error>> {
+pub fn load_maps(heightmap_name: &str, colormap_name: &str) -> Result<TerrainPyramids, Box<dyn Error>> {
     let heightmap = load_heightmap(heightmap_name)?;
     let heightmap_pyr = pyramidize(heightmap)?;
     let colormap = load_colormap(colormap_name)?;
