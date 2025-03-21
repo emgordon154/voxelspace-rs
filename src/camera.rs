@@ -10,9 +10,9 @@ pub struct Camera {
     pub accel_factor: f64
 }
 
-use minifb::{Window, Key};
-impl Camera {
-    pub fn new() -> Self {
+use std::default::Default;
+impl Default for Camera {
+    fn default() -> Self {
         Self {
             x: 20.0,
             y: 20.0,
@@ -25,6 +25,11 @@ impl Camera {
             accel_factor: 0.0,
         }
     }
+}
+
+use minifb::{Window, Key};
+impl Camera {
+    pub fn new() -> Self { Self::default() }
 
     pub fn react_to_inputs(&mut self, window: &Window) {
         // Accelerate
