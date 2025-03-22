@@ -7,6 +7,7 @@ use crate::{
 };
 use minifb::{Window, Key};
 use std::time::Instant;
+// use std::thread::{self, Thread};
 
 pub struct Game {
     pub camera: Camera,
@@ -44,13 +45,29 @@ impl Game {
             current_map_pyrs,
             config,
         } = self;
+        // let mut threads: &[Thread];
+        // if config.render_thread_quant > 1 {
+        //     threads = (0..config.render_thread_quant).map(|_| 
+        //         thread::spawn)
+        // }
+        let mut sideways_framebuf = frame_buf.clone();
         let mut frame_counter = 0;
         let mut total_rendering_time: u128  = 0;
         while window.is_open() && !window.is_key_down(Key::Escape) {
             frame_counter += 1;
             let before_render_timestamp = Instant::now();
             camera.react_to_inputs(&window);
-            render::render(&mut camera, &config, &mut frame_buf, &mut y_buf, &current_map_pyrs);
+            if config.render_thread_quant == 1 {
+                render::render_single_threaded(&mut camera, &config, &mut frame_buf, &mut y_buf, &current_map_pyrs);
+            } else {
+                render::render_multi_threaded( &mut camera, &config, &mut sideways_framebuf, &mut y_buf, &current_map_pyrs);
+                for y in 0..config.screen_height {
+                    for x in 0..config.screen_width {
+                        frame_buf[y * config.screen_width + x] 
+                            = sideways_framebuf[ x * config.screen_height + y];
+                    }
+                }
+            };
             window::display_fps(&mut window, &config, &before_render_timestamp, &mut total_rendering_time, &frame_counter);
             window
                 .update_with_buffer(&frame_buf, config.screen_width, config.screen_height)

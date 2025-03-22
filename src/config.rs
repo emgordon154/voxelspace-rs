@@ -7,6 +7,7 @@ pub struct Config {
     pub draw_distance: u64, // Should this necessarily be a piece of the game's global state?
     pub scale_height: f64, // This feel maybe out-of-place here.
     pub horizon: f64, // So does this.
+    pub render_thread_quant: usize,
 }
 
 // impl Config {
@@ -24,11 +25,12 @@ impl Default for Config {
             screen_width,
             screen_height,
             max_fps: 60,
-            base_fov: 95.0,
+            base_fov: 90.0,
             speed_fov_adjust: 15.0,
             draw_distance: 800,
             scale_height: 240.0,
             horizon: screen_height as f64 / 3.0,
+            render_thread_quant: 4,
         }
     }
 }
