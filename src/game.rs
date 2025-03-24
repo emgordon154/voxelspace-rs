@@ -60,7 +60,7 @@ impl Game {
             if config.render_thread_quant == 1 {
                 render::render_single_threaded(&mut camera, &config, &mut frame_buf, &mut y_buf, &current_map_pyrs);
             } else {
-                render::render_multi_threaded( &mut camera, &config, &mut sideways_framebuf, &mut y_buf, &current_map_pyrs);
+                render::render_multi_threaded_v3( &mut camera, &config, &mut sideways_framebuf, &mut y_buf, &current_map_pyrs);
                 for y in 0..config.screen_height {
                     for x in 0..config.screen_width {
                         frame_buf[y * config.screen_width + x] 
