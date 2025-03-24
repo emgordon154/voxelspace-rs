@@ -42,7 +42,7 @@ pub fn render_single_threaded(
     
     let fov = config.base_fov - config.speed_fov_adjust * (cam.velocity / cam.max_velocity);
 
-    let fov_adjust = (fov - 90.0) * f64::consts::PI / 90.0;
+    let fov_adjust = (fov - 90.0) * f64::consts::PI / 180.0;
     let theta_left = cam.theta + fov_adjust / 2.0;
     let sintheta_left = theta_left.sin();
     let costheta_left = theta_left.cos();
