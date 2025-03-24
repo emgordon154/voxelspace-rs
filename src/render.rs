@@ -132,7 +132,6 @@ pub fn render_multi_threaded(
     let screen_slice_pixelwidth = config.screen_width / config.render_thread_quant;
     let screen_slice_radians = fov_radians / config.render_thread_quant as f64;
 
-    // let barrier = Barrier::new(config.render_thread_quant + 1);
     thread::scope(|s| {
         let mut y_buf_chunks = y_buf.chunks_exact_mut(screen_slice_pixelwidth);
         let mut frame_buf_chunks = sideways_frame_buf.chunks_exact_mut(screen_slice_pixelwidth * config.screen_height);
@@ -142,7 +141,6 @@ pub fn render_multi_threaded(
 
             s.spawn(move|| {
                 let slice_theta_right = theta_right - screen_slice_radians * t as f64;
-                // let slice_pixels_left = screen_slice_pixelwidth * t;
                 let slice_theta_left = slice_theta_right - screen_slice_radians;
                 let d_theta = (slice_theta_right - slice_theta_left) / screen_slice_pixelwidth as f64;
                 let mut theta = slice_theta_right;
@@ -170,44 +168,9 @@ pub fn render_multi_threaded(
                     }
                     theta -= d_theta;
                 }
-                // barrier.wait()
             });
         }
     });
-    // barrier.wait();
-
-    // // where to cut the frustrum? 20?
-    // let mut z = 20.0;
-    // let mut dz = 1.0;
-    // while z < config.draw_distance as f64 {
-    //     let mut pleft = Point{
-    //         x: -costheta_left * z - sintheta_left * z + cam.x,
-    //         y: sintheta_left * z - costheta_left * z + cam.y
-    //     };
-    //     let pright = Point{
-    //         x: costheta_right * z - sintheta_right * z + cam.x,
-    //         y: -sintheta_right * z - costheta_right * z + cam.y
-    //     };
-        
-    //     let dx = (pright.x - pleft.x) / config.screen_height as f64;
-    //     let dy = (pright.y - pleft.y) / config.screen_width as f64;
-    //     for x_on_screen in 0 .. config.screen_width {
-    //         let color = get_color_pixel(&pleft);
-    //         let hmap_pixel = get_height_pixel(&pleft);
-    //         let height_on_screen = ((cam.height - hmap_pixel as f64) / z * config.scale_height + config.horizon) as usize;
-    //         if height_on_screen < y_buf[x_on_screen] {
-    //             for j in height_on_screen .. y_buf[x_on_screen] {
-    //                 frame_buf[config.screen_width * j + x_on_screen] = color;
-    //             }
-    //             y_buf[x_on_screen] = height_on_screen;
-    //         }
-    //         pleft.x += dx;
-    //         pleft.y += dy;
-    //     }
-    //     z += dz;
-    //     // TODO: Mipmapping, so I can do LOD without horrific aliasing artifacts
-    //     dz += 0.0;
-    // }
 }
 
 
