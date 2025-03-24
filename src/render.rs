@@ -174,6 +174,7 @@ pub fn render_multi_threaded(
 }
 
 
+// Currently somewhat broken: Camera angle is off, and there's a weird waviness going on
 pub fn render_multi_threaded_v2(
     cam: &mut Camera, 
     config: &Config,
