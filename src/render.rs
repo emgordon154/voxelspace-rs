@@ -120,16 +120,7 @@ pub fn render_multi_threaded(
     
     let fov_degrees = config.base_fov - config.speed_fov_adjust * (cam.velocity / cam.max_velocity);
     let fov_radians = fov_degrees * f64::consts::PI / 180.0;
-    let fov_adjust = (fov_degrees - 90.0) * f64::consts::PI / 180.0; // oops, i had 90 before
-
-    let theta = cam.theta + fov_radians / 2.0; // hack because I fucked up somewhere idk where
-    
-    // let theta_left = theta + fov_adjust / 2.0;
-    // let sintheta_left = theta_left.sin();
-    // let costheta_left = theta_left.cos();
-    let theta_right = theta - fov_adjust / 2.0;
-    // let sintheta_right = theta_right.sin();
-    // let costheta_right = theta_right.cos();
+    let theta_right = cam.theta + fov_radians / 2.0;
     let cam_x = cam.x;
     let cam_y = cam.y;
     let cam_height = cam.height;
