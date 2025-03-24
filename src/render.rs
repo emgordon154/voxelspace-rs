@@ -211,8 +211,8 @@ pub fn render_multi_threaded_v3(
     let cam_height = cam.height;
 
     
-    sideways_frame_buf.fill(SKY_BLUE);
-    y_buf.fill(config.screen_height - 1);
+    // sideways_frame_buf.fill(SKY_BLUE);
+    // y_buf.fill(config.screen_height - 1);
 
     let screen_slice_pixelwidth = config.screen_width / config.render_thread_quant;
     let screen_slice_radians = fov_radians / config.render_thread_quant as f64;
@@ -223,6 +223,8 @@ pub fn render_multi_threaded_v3(
         for t in 0..config.render_thread_quant {
             let y_buf_chunk = y_buf_chunks.next().unwrap();
             let frame_buf_chunk = frame_buf_chunks.next().unwrap();
+            frame_buf_chunk.fill(SKY_BLUE);
+            y_buf_chunk.fill(config.screen_height - 1);
 
             s.spawn(move|| {
                 let slice_theta_right = theta_right - screen_slice_radians * t as f64;
