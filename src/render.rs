@@ -204,7 +204,7 @@ pub fn render_multi_threaded_v2(
     
     let fov_degrees = config.base_fov - config.speed_fov_adjust * (cam.velocity / cam.max_velocity);
     let fov_radians = fov_degrees * f64::consts::PI / 180.0;
-    let theta_left = cam.theta - fov_radians / 2.0;
+    // let theta_left = cam.theta - fov_radians / 2.0;
     let theta_right = cam.theta + fov_radians / 2.0;
     let cam_x = cam.x;
     let cam_y = cam.y;
@@ -219,10 +219,10 @@ pub fn render_multi_threaded_v2(
         for t in 0..config.render_thread_quant {
             let y_buf_chunk = y_buf_chunks.next().unwrap();
             let frame_buf_chunk = frame_buf_chunks.next().unwrap();
-            frame_buf_chunk.fill(SKY_BLUE);
-            y_buf_chunk.fill(config.screen_height - 1);
-
+            
             s.spawn(move|| {
+                frame_buf_chunk.fill(SKY_BLUE);
+                y_buf_chunk.fill(config.screen_height - 1);
                 let slice_theta_right = theta_right - screen_slice_radians * t as f64;
                 let sin_right = slice_theta_right.sin();
                 let cos_right = slice_theta_right.cos();
