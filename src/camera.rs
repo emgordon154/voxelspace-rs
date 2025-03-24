@@ -10,12 +10,13 @@ pub struct Camera {
     pub accel_factor: f64
 }
 
+static START_DISTANCE_FROM_GLITCHY_TERRAIN: f64 = 524288.0; // 1024 * map_length=512
 use std::default::Default;
 impl Default for Camera {
     fn default() -> Self {
         Self {
-            x: 20.0,
-            y: 20.0,
+            x: START_DISTANCE_FROM_GLITCHY_TERRAIN, // Arbitrary
+            y: START_DISTANCE_FROM_GLITCHY_TERRAIN, // 
             height: 200.0, // What's a good starting height, and where in this codebase should it go?
             theta: -2.25,
             rot_accel: 0.0,
