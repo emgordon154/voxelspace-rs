@@ -267,7 +267,7 @@ use crate::window;
 pub fn render_v3(
     cam: &mut Camera, 
     config: &Config,
-    mut frame_buf: &mut [u32],
+    frame_buf: &mut [u32],
     sideways_frame_buf: &mut [u32],
     y_buf: &mut [usize],
     current_map_pyrs: &TerrainPyramids,
@@ -293,21 +293,23 @@ pub fn render_v3(
         hmap[(p.x as u32 / 2 % hmap.width(), p.y as u32 / 2 % hmap.height())].0[0] as usize
         //     hmap[((p.x / 2.0).rem_euclid(hmap.width() as f64) as u32, (p.y / 2.0).rem_euclid(hmap.height() as f64) as u32 )].0[0] as usize
     };
+    let fov_degrees = config.base_fov - config.speed_fov_adjust * (cam.velocity / cam.max_velocity);
+    let fov_radians = fov_degrees * f64::consts::PI / 180.0;
+    // let theta_left = cam.theta - fov_radians / 2.0;
+    let mut theta_right = cam.theta + fov_radians / 2.0;
+    let mut cam_x = cam.x;
+    let mut cam_y = cam.y;
+    let mut cam_height = cam.height;
+
+    let screen_slice_pixelwidth = config.screen_width / config.render_thread_quant;
+    let screen_slice_radians = fov_radians / config.render_thread_quant as f64;
     
-    let mut frame_buf_lock = Arc::new(RwLock::new(frame_buf));
-    let before_render_timestamp = Instant::now();
+
+    let frame_buf_lock = Arc::new(RwLock::new(frame_buf));
+    // let mut cam_lock = Arc::new(RwLock::new(cam));
+    // let before_render_timestamp = Instant::now();
 
     thread::scope(|s| {
-        let fov_degrees = config.base_fov - config.speed_fov_adjust * (cam.velocity / cam.max_velocity);
-        let fov_radians = fov_degrees * f64::consts::PI / 180.0;
-        // let theta_left = cam.theta - fov_radians / 2.0;
-        let theta_right = cam.theta + fov_radians / 2.0;
-        let cam_x = cam.x;
-        let cam_y = cam.y;
-        let cam_height = cam.height;
-
-        let screen_slice_pixelwidth = config.screen_width / config.render_thread_quant;
-        let screen_slice_radians = fov_radians / config.render_thread_quant as f64;
 
         let mut y_buf_chunks = y_buf.chunks_exact_mut(screen_slice_pixelwidth);
         let mut frame_buf_chunks = sideways_frame_buf.chunks_exact_mut(screen_slice_pixelwidth * config.screen_height);
@@ -315,11 +317,9 @@ pub fn render_v3(
         for t in 0..config.render_thread_quant {
             let y_buf_chunk = y_buf_chunks.next().unwrap();
             let frame_buf_chunk = frame_buf_chunks.next().unwrap();
-
             let frame_buf_lock = frame_buf_lock.clone();
-            
             s.spawn(move|| {
-                while true {
+                loop {
                     frame_buf_chunk.fill(SKY_BLUE);
                     y_buf_chunk.fill(config.screen_height - 1);
                     let slice_theta_right = theta_right - screen_slice_radians * t as f64;
@@ -328,7 +328,8 @@ pub fn render_v3(
                     let slice_theta_left = slice_theta_right + screen_slice_radians;
                     let sin_left = slice_theta_left.sin();
                     let cos_left = slice_theta_left.cos();
-                    let mut z = 20.0;let mut dz = 1.0;
+                    let mut z = 20.0;
+                    let mut dz = 1.0;
                     while z < config.draw_distance as f64 {
                         let mut p_left = Point { x: -sin_left * z + cam_x,  y: -cos_left * z + cam_y  };
                         let p_right = Point { x: -sin_right * z + cam_x,  y: -cos_right * z + cam_y  };
@@ -350,13 +351,8 @@ pub fn render_v3(
                         z += dz;
                         dz += 0.0;
                     }
+                    
                     let mut frame_buf = frame_buf_lock.write().unwrap();
-                    // for y in 0..config.screen_height {
-                    //     for x in 0..config.screen_width {
-                    //         frame_buf[y * config.screen_width + x] 
-                    //             = sideways_frame_buf[ x * config.screen_height + y];
-                    //     }
-                    // }   
                     for y in 0..config.screen_height {
                         for x in 0..screen_slice_pixelwidth {
                             frame_buf[ y * config.screen_width + (t * screen_slice_pixelwidth + x) ] =
@@ -367,22 +363,15 @@ pub fn render_v3(
             });
         }
         while window.is_open() && !window.is_key_down(Key::Escape) {
-            frame_counter += 1;
+            // let cam = cam_lock.read().unwrap();
+                    // let theta_left = cam.theta - fov_radians / 2.0;
             let before_render_timestamp = Instant::now();
             cam.react_to_inputs(&window);
-    
-    
-            let fov_degrees = config.base_fov - config.speed_fov_adjust * (cam.velocity / cam.max_velocity);
-            let fov_radians = fov_degrees * f64::consts::PI / 180.0;
-            // let theta_left = cam.theta - fov_radians / 2.0;
-            let theta_right = cam.theta + fov_radians / 2.0;
-            let cam_x = cam.x;
-            let cam_y = cam.y;
-            let cam_height = cam.height;
-    
-            let screen_slice_pixelwidth = config.screen_width / config.render_thread_quant;
-            let screen_slice_radians = fov_radians / config.render_thread_quant as f64;
-
+            theta_right = cam.theta + fov_radians / 2.0;
+            cam_x = cam.x;
+            cam_y = cam.y;
+            cam_height = cam.height;
+            frame_counter += 1;
             let frame_buf = frame_buf_lock.read().unwrap();
             window::display_fps(&mut window, &config, &before_render_timestamp, &mut total_rendering_time, &frame_counter);
             window
