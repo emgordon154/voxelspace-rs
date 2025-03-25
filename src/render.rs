@@ -296,10 +296,11 @@ pub fn render_v3(
     let fov_degrees = config.base_fov - config.speed_fov_adjust * (cam.velocity / cam.max_velocity);
     let fov_radians = fov_degrees * f64::consts::PI / 180.0;
     // let theta_left = cam.theta - fov_radians / 2.0;
-    let mut theta_right = cam.theta + fov_radians / 2.0;
-    let mut cam_x = cam.x;
-    let mut cam_y = cam.y;
-    let mut cam_height = cam.height;
+    // let mut theta_right = cam.theta + fov_radians / 2.0;
+    // let mut cam_x = cam.x;
+    // let mut cam_y = cam.y;
+    // let mut cam_height = cam.height;
+    let cam_lock = Arc::new(RwLock::new(cam));
 
     let screen_slice_pixelwidth = config.screen_width / config.render_thread_quant;
     let screen_slice_radians = fov_radians / config.render_thread_quant as f64;
@@ -318,8 +319,14 @@ pub fn render_v3(
             let y_buf_chunk = y_buf_chunks.next().unwrap();
             let frame_buf_chunk = frame_buf_chunks.next().unwrap();
             let frame_buf_lock = frame_buf_lock.clone();
+            let cam_lock = cam_lock.clone();
             s.spawn(move|| {
                 loop {
+                    let cam = cam_lock.read().unwrap();
+                    let mut theta_right = cam.theta + fov_radians / 2.0;
+                    let mut cam_x = cam.x;
+                    let mut cam_y = cam.y;
+                    let mut cam_height = cam.height;
                     frame_buf_chunk.fill(SKY_BLUE);
                     y_buf_chunk.fill(config.screen_height - 1);
                     let slice_theta_right = theta_right - screen_slice_radians * t as f64;
@@ -366,11 +373,8 @@ pub fn render_v3(
             // let cam = cam_lock.read().unwrap();
                     // let theta_left = cam.theta - fov_radians / 2.0;
             let before_render_timestamp = Instant::now();
+            let mut cam = cam_lock.write().unwrap();
             cam.react_to_inputs(&window);
-            theta_right = cam.theta + fov_radians / 2.0;
-            cam_x = cam.x;
-            cam_y = cam.y;
-            cam_height = cam.height;
             frame_counter += 1;
             let frame_buf = frame_buf_lock.read().unwrap();
             window::display_fps(&mut window, &config, &before_render_timestamp, &mut total_rendering_time, &frame_counter);
