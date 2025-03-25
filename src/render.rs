@@ -322,11 +322,17 @@ pub fn render_v3(
             let cam_lock = cam_lock.clone();
             s.spawn(move|| {
                 loop {
-                    let cam = cam_lock.read().unwrap();
-                    let mut theta_right = cam.theta + fov_radians / 2.0;
-                    let mut cam_x = cam.x;
-                    let mut cam_y = cam.y;
-                    let mut cam_height = cam.height;
+                    let theta_right: f64;
+                    let cam_x: f64;
+                    let cam_y: f64;
+                    let cam_height: f64;
+                    {
+                        let cam = cam_lock.read().unwrap();
+                        theta_right = cam.theta + fov_radians / 2.0;
+                        cam_x = cam.x;
+                        cam_y = cam.y;
+                        cam_height = cam.height;
+                    }
                     frame_buf_chunk.fill(SKY_BLUE);
                     y_buf_chunk.fill(config.screen_height - 1);
                     let slice_theta_right = theta_right - screen_slice_radians * t as f64;
@@ -373,8 +379,12 @@ pub fn render_v3(
             // let cam = cam_lock.read().unwrap();
                     // let theta_left = cam.theta - fov_radians / 2.0;
             let before_render_timestamp = Instant::now();
-            let mut cam = cam_lock.write().unwrap();
-            cam.react_to_inputs(&window);
+
+            {
+                let mut cam = cam_lock.write().unwrap();
+                cam.react_to_inputs(&window);
+            }
+            
             frame_counter += 1;
             let frame_buf = frame_buf_lock.read().unwrap();
             window::display_fps(&mut window, &config, &before_render_timestamp, &mut total_rendering_time, &frame_counter);
