@@ -1,5 +1,3 @@
-#![feature(mpmc_channel)]
-
 use core::f64;
 use std::sync::RwLock;
 
@@ -440,7 +438,7 @@ pub fn render_v3(
     // let mut cam_x = cam.x;
     // let mut cam_y = cam.y;
     // let mut cam_height = cam.height;
-    let cam_lock = Arc::new(RwLock::new(cam));
+    // let cam_lock = Arc::new(RwLock::new(cam));
 
     let screen_slice_pixelwidth = config.screen_width / config.render_thread_quant;
     let screen_slice_radians = fov_radians / config.render_thread_quant as f64;
@@ -459,7 +457,8 @@ pub fn render_v3(
             let y_buf_chunk = y_buf_chunks.next().unwrap();
             let frame_buf_chunk = frame_buf_chunks.next().unwrap();
             let frame_buf_lock = frame_buf_lock.clone();
-            let cam_lock = cam_lock.clone();
+            // let cam_lock = cam_lock.clone();
+            let rx=rx.clone();
             s.spawn(move|| {
                 loop {
                     let theta_right: f64;
@@ -467,7 +466,8 @@ pub fn render_v3(
                     let cam_y: f64;
                     let cam_height: f64;
                     {
-                        let cam = cam_lock.read().unwrap();
+                        // let cam = cam_lock.read().unwrap();
+                        let cam: Camera = rx.recv().unwrap();
                         theta_right = cam.theta + fov_radians / 2.0;
                         cam_x = cam.x;
                         cam_y = cam.y;
@@ -519,8 +519,9 @@ pub fn render_v3(
             let before_render_timestamp = Instant::now();
 
             {
-                let mut cam = cam_lock.write().unwrap();
+                // let mut cam = cam_lock.write().unwrap();
                 cam.react_to_inputs(&window);
+                tx.send(cam.clone());
             }
             
             frame_counter += 1;
