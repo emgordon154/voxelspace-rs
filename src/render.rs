@@ -214,7 +214,8 @@ pub fn render_multi_threaded_v2(
     let cam_height = cam.height;
 
     let screen_slice_pixelwidth = config.screen_width / config.render_thread_quant;
-    let screen_slice_radians = fov_radians / config.render_thread_quant as f64;
+    let radians_per_pixel = fov_radians / screen_slice_pixelwidth as f64;
+    // let screen_slice_radians = fov_radians / config.render_thread_quant as f64;
 
     thread::scope(|s| {
         let mut y_buf_chunks = y_buf.chunks_exact_mut(screen_slice_pixelwidth);
@@ -223,13 +224,14 @@ pub fn render_multi_threaded_v2(
             let y_buf_chunk = y_buf_chunks.next().unwrap();
             let frame_buf_chunk = frame_buf_chunks.next().unwrap();
             
-            s.spawn(move|| {
+            // I tried setting stack size to 16kB, but if anything, maybe lost a few fps ?
+            thread::Builder::new().spawn_scoped(s, move|| {
                 frame_buf_chunk.fill(SKY_BLUE);
                 y_buf_chunk.fill(config.screen_height - 1);
-                let slice_theta_right = theta_right - screen_slice_radians * t as f64;
+                let slice_theta_right = theta_right - radians_per_pixel * (screen_slice_pixelwidth * t) as f64;
                 let sin_right = slice_theta_right.sin();
                 let cos_right = slice_theta_right.cos();
-                let slice_theta_left = slice_theta_right + screen_slice_radians;
+                let slice_theta_left = slice_theta_right + radians_per_pixel * (screen_slice_pixelwidth - 1) as f64;
                 let sin_left = slice_theta_left.sin();
                 let cos_left = slice_theta_left.cos();
                 let mut z = 20.0;
