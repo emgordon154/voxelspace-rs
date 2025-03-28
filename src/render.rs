@@ -214,7 +214,7 @@ pub fn render_multi_threaded_v2(
     let cam_height = cam.height;
 
     let screen_slice_pixelwidth = config.screen_width / config.render_thread_quant;
-    let radians_per_pixel = fov_radians / screen_slice_pixelwidth as f64;
+    let radians_per_pixel = fov_radians / config.screen_width as f64;
     // let screen_slice_radians = fov_radians / config.render_thread_quant as f64;
 
     thread::scope(|s| {
