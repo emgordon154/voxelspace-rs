@@ -57,9 +57,9 @@ impl Game {
             frame_counter += 1;
             let before_render_timestamp = Instant::now();
             camera.react_to_inputs(&window);
-            if config.render_thread_quant == 1 {
-                render::render_single_threaded(&mut camera, &config, &mut frame_buf, &mut y_buf, &current_map_pyrs);
-            } else {
+            // if config.render_thread_quant == 1 {
+            //     render::render_single_threaded(&mut camera, &config, &mut frame_buf, &mut y_buf, &current_map_pyrs);
+            // } else {
                 render::render_multi_threaded_v2( &mut camera, &config, &mut sideways_framebuf, &mut y_buf, &current_map_pyrs);
                 for y in 0..config.screen_height {
                     for x in 0..config.screen_width {
@@ -67,7 +67,7 @@ impl Game {
                             = sideways_framebuf[ x * config.screen_height + y];
                     }
                 }
-            };
+            // };
             // render::render_v3(&mut camera, &config, &mut frame_buf, &mut sideways_framebuf, &mut y_buf, &current_map_pyrs, &mut window, frame_counter, total_rendering_time);
             window::display_fps(&mut window, &config, &before_render_timestamp, &mut total_rendering_time, &frame_counter);
             window

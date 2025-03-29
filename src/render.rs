@@ -200,6 +200,7 @@ pub fn render_multi_threaded_v2(
         (r << 16) | (g << 8) | b
     };
     let get_height_pixel = |p: &Point| -> usize {
+        // hmap[(p.x as u32 / 2 % hmap.width(), p.y as u32 % hmap.height())].0[0] as usize
         // NASTY HACK to compensate for C5W.png and D5.png being mismatched sizes!!
         hmap[(p.x as u32 / 2 % hmap.width(), p.y as u32 / 2 % hmap.height())].0[0] as usize
         //     hmap[((p.x / 2.0).rem_euclid(hmap.width() as f64) as u32, (p.y / 2.0).rem_euclid(hmap.height() as f64) as u32 )].0[0] as usize
@@ -208,7 +209,8 @@ pub fn render_multi_threaded_v2(
     let fov_degrees = config.base_fov - config.speed_fov_adjust * (cam.velocity / cam.max_velocity);
     let fov_radians = fov_degrees * f64::consts::PI / 180.0;
     // let theta_left = cam.theta - fov_radians / 2.0;
-    let theta_right = cam.theta + fov_radians / 2.0;
+    // let theta_right = cam.theta + fov_radians / 2.0;
+    let theta_right = cam.theta + fov_radians / 2.0 - fov_radians / config.render_thread_quant as f64;
     let cam_x = cam.x;
     let cam_y = cam.y;
     let cam_height = cam.height;
