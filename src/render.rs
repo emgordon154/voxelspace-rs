@@ -27,16 +27,22 @@ pub fn render_multi_threaded(
     
 
     // PROBLEM: C5W.png and D5.png are mismatched sizes
-    let cmap = colormap_pyr.levels[0].as_rgb8().unwrap();
-    let hmap = heightmap_pyr.levels[0].as_luma8().unwrap(); 
-    let get_color_pixel = |p: &Point| -> u32 {
+    let cmap_0 = colormap_pyr.levels[0].as_rgb8().unwrap();
+    let cmap_1 = colormap_pyr.levels[1].as_rgb8().unwrap();
+    let hmap_0 = heightmap_pyr.levels[0].as_luma8().unwrap(); 
+    let hmap_1 = heightmap_pyr.levels[1].as_luma8().unwrap();
+    let get_color_pixel = |p: &Point, far: bool| -> u32 {
+        let scale_factor = if far {2} else {1};
+        let cmap = if far {cmap_1} else {cmap_0};
         let [r, g, b] = 
-        cmap[(p.x as u32 % cmap.width(), p.y as u32 % cmap.height())].0.map(|byte| byte as u32);
+        cmap[(p.x as u32 % cmap_0.width() / scale_factor, p.y as u32 % cmap_0.height() / scale_factor)].0.map(|byte| byte as u32);
         (r << 16) | (g << 8) | b
     };
-    let get_height_pixel = |p: &Point| -> usize {
+    let get_height_pixel = |p: &Point, far: bool| -> usize {
+        let scale_factor = if far {2} else {1};
+        let hmap = if far {hmap_1} else {hmap_0};
         // Nasty hack to compensate for C5W.png and D5.png being mismatched sizes
-        hmap[(p.x as u32 / 2 % hmap.width(), p.y as u32 / 2 % hmap.height())].0[0] as usize
+        hmap[(p.x as u32 / 2 % hmap_0.width() / scale_factor, p.y as u32 / 2 % hmap_0.height() / scale_factor)].0[0] as usize
     };
 
     // Doing this instead fixes the rendering bug at negative coordinates, but causes major slowdown
@@ -79,14 +85,13 @@ pub fn render_multi_threaded(
                     let sintheta = theta.sin();
                     let costheta = theta.cos();
                     let mut z = 20.0;
-                    let mut dz = 1.0;
                     while z < config.draw_distance as f64 {
                         let p = Point {
                             x: -sintheta * z + cam_x,
                             y: -costheta * z + cam_y
                         };
-                        let color = get_color_pixel(&p);
-                        let hmap_pixel = get_height_pixel(&p);
+                        let color = get_color_pixel(&p, z > config.lod_1_distance);
+                        let hmap_pixel = get_height_pixel(&p, z > config.lod_1_distance);
                         let height_on_screen = ((cam_height - hmap_pixel as f64) / z * config.scale_height + config.horizon) as usize;
                         if height_on_screen < y_buf_chunk[x_on_slice] {
                             for j in height_on_screen .. y_buf_chunk[x_on_slice] {
@@ -94,9 +99,7 @@ pub fn render_multi_threaded(
                             }
                             y_buf_chunk[x_on_slice] = height_on_screen;
                         }
-                        z += dz;
-                        // TODO: Implement mipmapping
-                        dz += 0.0;
+                        z += if z > config.lod_1_distance {3.0} else {1.0};
                     }
                     theta += d_theta;
                 }
