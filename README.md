@@ -1,6 +1,6 @@
 ## voxelspace-rs
 
-![](https://github.com/emgordon154/voxelspace-rs/demo.gif)
+![](https://github.com/emgordon154/voxelspace-rs/blob/main/demo.gif)
 
 A Rust implementation of the [VoxelSpace](https://github.com/s-macke/VoxelSpace/tree/master) algorithm. It uses [minifb](https://crates.io/crates/minifb) to open a window that can take keyboard input and display the contents of the framebuffer; [image](https://crates.io/crates/image) to load the terrain map files, and [image-pyramid](https://crates.io/crates/image-pyramid) to create mipmaps of those.
 
