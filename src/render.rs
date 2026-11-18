@@ -209,14 +209,14 @@ pub fn render_multi_threaded_v2(
     let fov_degrees = config.base_fov - config.speed_fov_adjust * (cam.velocity / cam.max_velocity);
     let fov_radians = fov_degrees * f64::consts::PI / 180.0;
     // let theta_left = cam.theta - fov_radians / 2.0;
-    // let theta_right = cam.theta + fov_radians / 2.0;
-    let theta_right = cam.theta + fov_radians / 2.0 - fov_radians / config.render_thread_quant as f64;
+    let theta_right = cam.theta + fov_radians / 2.0;
+    // let theta_right = cam.theta + fov_radians / 2.0 - fov_radians / config.render_thread_quant as f64;
     let cam_x = cam.x;
     let cam_y = cam.y;
     let cam_height = cam.height;
 
     let screen_slice_pixelwidth = config.screen_width / config.render_thread_quant;
-    let radians_per_pixel = fov_radians / config.screen_width as f64;
+    let radians_per_pixel = fov_radians / screen_slice_pixelwidth as f64;
     // let screen_slice_radians = fov_radians / config.render_thread_quant as f64;
 
     thread::scope(|s| {

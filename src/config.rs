@@ -30,7 +30,7 @@ impl Default for Config {
             draw_distance: 1200,
             scale_height: 240.0,
             horizon: screen_height as f64 / 3.0,
-            render_thread_quant: 4,
+            render_thread_quant: 3,
         }
     }
 }
