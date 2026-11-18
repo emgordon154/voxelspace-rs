@@ -2,19 +2,13 @@ pub struct Config {
     pub screen_width: usize,
     pub screen_height: usize,
     pub max_fps: usize,
-    pub base_fov: f64, // Should this be here or on the camera?
+    pub base_fov: f64, // TODO: Should this be here or on the camera?
     pub speed_fov_adjust: f64,
-    pub draw_distance: u64, // Should this necessarily be a piece of the game's global state?
-    pub scale_height: f64, // This feel maybe out-of-place here.
+    pub draw_distance: u64, // TODO: Should this necessarily be a piece of the game's global state?
+    pub scale_height: f64, // TODO: This feels maybe out-of-place here.
     pub horizon: f64, // So does this.
     pub render_thread_quant: usize,
 }
-
-// impl Config {
-//     fn new(screen_height: u64, screen_width: u64, draw_distance: u64) -> Self {
-
-//     }
-// }
 
 use std::default::Default;
 impl Default for Config {

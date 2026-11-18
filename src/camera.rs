@@ -11,14 +11,16 @@ pub struct Camera {
     pub accel_factor: f64
 }
 
+// arbitrary offset from origin to avoid bugged rendering at negative coordinates
 static START_DISTANCE_FROM_GLITCHY_TERRAIN: f64 = 524288.0; // 1024 * map_length=512
+
 use std::default::Default;
 impl Default for Camera {
     fn default() -> Self {
         Self {
-            x: START_DISTANCE_FROM_GLITCHY_TERRAIN, // Arbitrary
-            y: START_DISTANCE_FROM_GLITCHY_TERRAIN, // 
-            height: 200.0, // What's a good starting height, and where in this codebase should it go?
+            x: START_DISTANCE_FROM_GLITCHY_TERRAIN,
+            y: START_DISTANCE_FROM_GLITCHY_TERRAIN,
+            height: 200.0,
             theta: -2.25,
             rot_accel: 0.0,
             max_rot_velocity: 0.075,
